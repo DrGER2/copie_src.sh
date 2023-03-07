@@ -1,0 +1,41 @@
+The "standard" 161 byte encoded copie_scr.sh script for launching SD card shell scripts on MMI 3G systems, while useful, doesn't take full advantage of its native QNX
+environment, namely, in how it determines the path to the calling SD card root/base directory. I've been using this frequently lately to look at various processes and
+file systems in our MMI 3G+ system, and found the "standard" copie_scr.sh lacking, particularly with regard to its behavior when other removable media is connected to
+the system.
+
+Inspection of "pidin" shows that the script launcher process (proc_scriptlauncher) identifies correctly the mount path to the SD card in which the encoded copie_scr.sh
+script resides, for example:
+
+  323657   24584 /bin/proc_scriptlauncher -i 30 -p /dev/shmem/copie_scr.sh
+...
+  966717  323657 ksh /dev/shmem/copie_scr.sh /mnt/sdcard10t12
+  
+and
+
+  323657   24584 /bin/proc_scriptlauncher -i 30 -p /dev/shmem/copie_scr.sh
+...
+ 1212477  323657 ksh /dev/shmem/copie_scr.sh /mnt/sdcard20t12
+
+In the former case, the SD script is run from slot SD 1; in the latter, slot SD 2.
+
+Thus, shell argument 1 to the encoded copie_scr.sh script contains the correct mount path to the SD card. Using this information about the calling process, we can
+include it in a new (encoded) copie_scr.sh script:
+
+#!/bin/ksh
+# 20220102 drger; MMI3G SD shell script launcher
+export SDPATH=$1
+export PATH=${SDPATH}/bin:$PATH
+export SDLIB=${SDPATH}/lib
+export SDVAR=${SDPATH}/var
+export SWTRAIN="$(cat /dev/shmem/sw_trainname.txt)"
+mount -u $SDPATH
+cd $SDPATH
+exec ksh ./run.sh $SDPATH
+
+Here, new exported environment variable SDPATH contains the value passed from the script launcher process as argument number 1 ($1). And while we're at it, we can
+prepend our SD card bin directory to the PATH, and add a new SWTRAIN environment variable using the contents of /dev/shmem/sw_trainname.txt (this is the MMI firmware
+version name) (along with a couple environment variables I use routinely in my MMI SD scripts: SDLIB and SDVAR).
+
+Finally, the new encoded copie_scr.sh script launches our plain-text "run.sh" shell script with argument $SDPATH for completeness.
+
+The plain-text script is encoded with the tool available from GitHub project https://github.com/megusta1337/Copie_scr_Decoder.
