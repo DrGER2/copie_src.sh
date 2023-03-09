@@ -39,3 +39,11 @@ version name) (along with a couple environment variables I use routinely in my M
 Finally, the new encoded copie_scr.sh script launches our plain-text "run.sh" shell script with argument $SDPATH for completeness.
 
 The plain-text script is encoded with the tool available from GitHub project https://github.com/megusta1337/Copie_scr_Decoder.
+
+The encrypted scripted is created with the compiled Copie_scr_Decoder tool:
+
+./Copie_scr_Decoder < copie_scr.txt > copie_scr.sh
+
+The tool can be used to read the encrypted script as plain-text:
+
+./Copie_scr_Decoder < copie_scr.sh
