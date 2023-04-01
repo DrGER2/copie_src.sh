@@ -1,10 +1,6 @@
-The "standard" 161 byte encoded copie_scr.sh script for launching SD card shell scripts on MMI 3G systems, while useful, doesn't take
-full advantage of its native QNX environment, namely, in how it determines the path to the calling SD card root/base directory. I've
-been using this frequently lately to look at various processes and file systems in our MMI 3G+ system, and found the "standard"
-copie_scr.sh lacking, particularly with regard to its behavior when other removable media is connected to the system.
+The "standard" 161 byte encoded copie_scr.sh script for launching SD card shell scripts on MMI 3G systems, while useful, doesn't take full advantage of its native QNX environment, namely, in how it determines the path to the calling SD card root/base directory. I've been using this frequently lately to look at various processes and file systems in our MMI 3G+ system, and found the "standard" copie_scr.sh lacking, particularly with regard to its behavior when other removable media is connected to the system.
 
-Inspection of "pidin" shows that the script launcher process (proc_scriptlauncher) identifies correctly the mount path to the SD card
-in which the encoded copie_scr.sh script resides, for example:
+Inspection of "pidin" shows that the script launcher process (proc_scriptlauncher) identifies correctly the mount path to the SD card in which the encoded copie_scr.sh script resides, for example:
 
   323657   24584 /bin/proc_scriptlauncher -i 30 -p /dev/shmem/copie_scr.sh
 ...
